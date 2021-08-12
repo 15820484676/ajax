@@ -18,6 +18,7 @@ var server = http.createServer(function (request, response) {
   var path = parsedUrl.pathname;
   var query = parsedUrl.query;
   var method = request.method;
+  console.log(query);
 
   /******** 从这里开始看，上面不要看 ************/
 
@@ -76,7 +77,15 @@ var server = http.createServer(function (request, response) {
   } else if (path === "/friend.json") {
     response.statusCode = 200;
     response.setHeader("Content-Type", "text/json;charset=utf-8");
+    response.setHeader("Access-Control-Allow-Origin", "http://localhost:9000");
     response.write(fs.readFileSync("db/page1.json"));
+    response.end();
+  } else if (path === "/friend2.json") {
+    response.statusCode = 200;
+    response.setHeader("Content-Type", "text/json;charset=utf-8");
+    let funcName = query["callback"];
+    console.log(funcName);
+    response.write(`${funcName}(${fs.readFileSync("db/page1.json")})`);
     response.end();
   } else {
     response.statusCode = 404;

@@ -91,3 +91,41 @@ pagination.addEventListener("click", () => {
   n += 1;
   n = n === 3 ? n - 1 : n;
 });
+
+// cors
+corsData.addEventListener("click", () => {
+  const req = new XMLHttpRequest();
+  req.open("GET", "http://localhost:9001/friend.json");
+  req.onreadystatechange = () => {
+    if (req.readyState === 4 && req.status === 200) {
+      const dataArray = JSON.parse(req.response);
+      console.log(dataArray);
+      let ul = document.createElement("ul");
+      ul.innerHTML = dataArray.map((item) => `<li>${item}</li>`).join("");
+      list.appendChild(ul);
+    }
+  };
+  req.send();
+});
+
+//JSONP
+jsonpData.addEventListener("click", () => {
+  //创建一个全局回调函数
+  let funcName = `jsonp${parseInt(Math.random() * 10000000)}`;
+  window[funcName] = (data) => {
+    console.log(data);
+  };
+  console.log(funcName);
+
+  let script = document.createElement("script");
+  script.src = `http://localhost:9001/friend2.json?callback=${funcName}`;
+  document.body.appendChild(script);
+  script.onload = (e) => {
+    console.log(e.currentTarget);
+    e.currentTarget.remove();
+    delete window[funcName];
+  };
+  script.onerror = (e) => {
+    alert("出错了哦~");
+  };
+});
